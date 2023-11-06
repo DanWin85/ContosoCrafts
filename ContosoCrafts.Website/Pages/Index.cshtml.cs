@@ -1,20 +1,14 @@
-﻿using ContosoCrafts.Website.Models;
+﻿using System.Collections.Generic;
+using ContosoCrafts.WebSite.Models;
 using ContosoCrafts.WebSite.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace ContosoCrafts.Website.Pages
+namespace ContosoCrafts.WebSite.Pages
 {
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
-        public JsonFileProductService ProductService;
-        public IEnumerable<Product> Products { get; private set; }
 
         public IndexModel(ILogger<IndexModel> logger,
             JsonFileProductService productService)
@@ -23,9 +17,9 @@ namespace ContosoCrafts.Website.Pages
             ProductService = productService;
         }
 
-        public void OnGet()
-        {
-            Products = ProductService.GetProducts();
-        }
+        public JsonFileProductService ProductService { get; }
+        public IEnumerable<Product>? Products { get; private set; }
+
+        public void OnGet() => Products = ProductService.GetProducts();
     }
 }

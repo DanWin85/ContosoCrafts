@@ -1,34 +1,37 @@
-﻿using ContosoCrafts.Website.Models;
+﻿using System.Collections.Generic;
+using ContosoCrafts.WebSite.Models;
 using ContosoCrafts.WebSite.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace ContosoCrafts.Website.Controllers
+namespace ContosoCrafts.WebSite.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class ProductsController : ControllerBase
     {
-        public ProductsController(JsonFileProductService productService) 
-        {
-            this.ProductService = productService;
-        }
+        public ProductsController(JsonFileProductService productService) => 
+            ProductService = productService;
 
         public JsonFileProductService ProductService { get; }
 
         [HttpGet]
-        public IEnumerable<Product> Get()
+        public IEnumerable<Product> Get() => ProductService.GetProducts();
+
+        [HttpPatch]
+        public ActionResult Patch([FromBody] RatingRequest request)
         {
-            return ProductService.GetProducts();
+            if (request?.ProductId == null)
+                return BadRequest();
+
+            ProductService.AddRating(request.ProductId, request.Rating);
+
+            return Ok();
         }
-        [Route("Rate")]
-        [HttpGet]
-        public ActionResult Get([FromQuery]string ProductId, int Rating)
+
+        public class RatingRequest
         {
-            ProductService.AddRating(ProductId, Rating);
-                return Ok();
+            public string? ProductId { get; set; }
+            public int Rating { get; set; }
         }
     }
 }
